@@ -1,4 +1,5 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { s3Storage } from '@payloadcms/storage-s3'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
@@ -18,6 +19,27 @@ import { RecipeNutritions } from './collections/RecipeNutritions'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+const r2Storage = s3Storage({
+  collections: {
+    media: {
+      disableLocalStorage: true,
+      prefix: 'media',
+      generateFileURL: ({ filename, prefix }) =>
+        `https://${process.env.R2_BUCKET}.${process.env.R2_ENDPOINT}/${prefix}/${filename}`,
+    },
+  },
+  bucket: process.env.R2_BUCKET || '',
+  config: {
+    endpoint: `https://${process.env.R2_ENDPOINT}` || '',
+    credentials: {
+      accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
+      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
+    },
+    region: 'auto',
+    forcePathStyle: true,
+  },
+})
 
 export default buildConfig({
   admin: {
@@ -49,5 +71,5 @@ export default buildConfig({
     },
   }),
   sharp,
-  plugins: [],
+  plugins: [r2Storage],
 })
