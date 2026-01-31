@@ -29,7 +29,7 @@ interface LexicalRoot {
 export async function translateText(
   text: string,
   openaiApiKey: string,
-  targetLanguage: string = 'Bulgarian'
+  targetLanguage: string = 'Bulgarian',
 ): Promise<string> {
   if (!text || text.trim() === '') {
     return text
@@ -56,7 +56,7 @@ ${text}`,
 async function translateLexicalNode(
   node: LexicalNode,
   openaiApiKey: string,
-  targetLanguage: string
+  targetLanguage: string,
 ): Promise<LexicalNode> {
   // If this is a text node, translate it
   if (node.type === 'text' && 'text' in node) {
@@ -71,7 +71,7 @@ async function translateLexicalNode(
   // If the node has children, recursively translate them
   if (node.children && Array.isArray(node.children)) {
     const translatedChildren = await Promise.all(
-      node.children.map((child) => translateLexicalNode(child, openaiApiKey, targetLanguage))
+      node.children.map((child) => translateLexicalNode(child, openaiApiKey, targetLanguage)),
     )
     return {
       ...node,
@@ -89,7 +89,7 @@ async function translateLexicalNode(
 export async function translateRichText(
   richText: any,
   openaiApiKey: string,
-  targetLanguage: string = 'Bulgarian'
+  targetLanguage: string = 'Bulgarian',
 ): Promise<any> {
   if (!richText || typeof richText !== 'object') {
     return richText
@@ -103,8 +103,8 @@ export async function translateRichText(
 
   const translatedChildren = await Promise.all(
     lexicalContent.root.children.map((child) =>
-      translateLexicalNode(child, openaiApiKey, targetLanguage)
-    )
+      translateLexicalNode(child, openaiApiKey, targetLanguage),
+    ),
   )
 
   return {
@@ -122,7 +122,7 @@ export async function translateRichText(
 export async function translateFaqArray(
   faqArray: Array<{ question: string; answer: any; id?: string }> | undefined,
   openaiApiKey: string,
-  targetLanguage: string = 'Bulgarian'
+  targetLanguage: string = 'Bulgarian',
 ): Promise<Array<{ question: string; answer: any; id?: string }>> {
   if (!faqArray || !Array.isArray(faqArray) || faqArray.length === 0) {
     return []
@@ -138,7 +138,7 @@ export async function translateFaqArray(
         question: translatedQuestion,
         answer: translatedAnswer,
       }
-    })
+    }),
   )
 
   return translatedFaqs
@@ -150,7 +150,7 @@ export async function translateFaqArray(
 export async function translateIngredient(
   ingredientId: number | string,
   payload: Payload,
-  openaiApiKey: string
+  openaiApiKey: string,
 ): Promise<void> {
   console.log(`🌍 Starting translation for ingredient ID: ${ingredientId}`)
 
@@ -159,7 +159,7 @@ export async function translateIngredient(
     const ingredient = await payload.findByID({
       collection: 'ingredients',
       id: ingredientId,
-      locale: 'en',
+      locale: 'all',
     })
 
     if (!ingredient) {
@@ -172,13 +172,6 @@ export async function translateIngredient(
     const translatedName = await translateText(ingredient.name, openaiApiKey)
     console.log(`✅ Translated name: ${ingredient.name} → ${translatedName}`)
 
-    const translatedShortDescription = ingredient.shortDescription
-      ? await translateText(ingredient.shortDescription, openaiApiKey)
-      : undefined
-    if (translatedShortDescription) {
-      console.log(`✅ Translated short description`)
-    }
-
     const translatedLongDescription = ingredient.longDescription
       ? await translateRichText(ingredient.longDescription, openaiApiKey)
       : undefined
@@ -187,7 +180,10 @@ export async function translateIngredient(
     }
 
     const translatedFaq = ingredient.faq
-      ? await translateFaqArray(ingredient.faq as Array<{ question: string; answer: any; id?: string }>, openaiApiKey)
+      ? await translateFaqArray(
+          ingredient.faq as Array<{ question: string; answer: any; id?: string }>,
+          openaiApiKey,
+        )
       : undefined
     if (translatedFaq && translatedFaq.length > 0) {
       console.log(`✅ Translated ${translatedFaq.length} FAQ items`)
@@ -197,10 +193,9 @@ export async function translateIngredient(
     await payload.update({
       collection: 'ingredients',
       id: ingredientId,
-      locale: 'bg',
+      locale: undefined, // Let Payload handle the locale
       data: {
         name: translatedName,
-        shortDescription: translatedShortDescription,
         longDescription: translatedLongDescription,
         faq: translatedFaq,
       },

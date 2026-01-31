@@ -234,11 +234,7 @@ export interface IngredientFaq {
 export interface Ingredient {
   id: number;
   name: string;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
+  slug?: string | null;
   image?: (number | null) | Media;
   longDescription?: {
     root: {
@@ -306,11 +302,7 @@ export interface Ingredient {
 export interface IngredientTag {
   id: number;
   name: string;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
+  slug?: string | null;
   description?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -322,11 +314,7 @@ export interface IngredientTag {
 export interface RecipeTag {
   id: number;
   name: string;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
+  slug?: string | null;
   description?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -378,11 +366,7 @@ export interface Recipe {
   relatedRecipes?: (number | Recipe)[] | null;
   publishedAt?: string | null;
   authors?: (number | User)[] | null;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
+  slug?: string | null;
   tags?: (number | RecipeTag)[] | null;
   updatedAt: string;
   createdAt: string;
@@ -772,7 +756,6 @@ export interface IngredientFaqSelect<T extends boolean = true> {
  */
 export interface IngredientTagsSelect<T extends boolean = true> {
   name?: T;
-  generateSlug?: T;
   slug?: T;
   description?: T;
   updatedAt?: T;
@@ -784,7 +767,6 @@ export interface IngredientTagsSelect<T extends boolean = true> {
  */
 export interface IngredientsSelect<T extends boolean = true> {
   name?: T;
-  generateSlug?: T;
   slug?: T;
   image?: T;
   longDescription?: T;
@@ -815,7 +797,6 @@ export interface IngredientsSelect<T extends boolean = true> {
  */
 export interface RecipeTagsSelect<T extends boolean = true> {
   name?: T;
-  generateSlug?: T;
   slug?: T;
   description?: T;
   updatedAt?: T;
@@ -856,7 +837,6 @@ export interface RecipesSelect<T extends boolean = true> {
   relatedRecipes?: T;
   publishedAt?: T;
   authors?: T;
-  generateSlug?: T;
   slug?: T;
   tags?: T;
   updatedAt?: T;

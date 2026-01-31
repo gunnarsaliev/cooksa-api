@@ -10,7 +10,7 @@ import { translateText, translateRichText } from './translateIngredient'
 export async function translateDirectionsArray(
   directionsArray: Array<{ direction: string; id?: string }> | undefined,
   openaiApiKey: string,
-  targetLanguage: string = 'Bulgarian'
+  targetLanguage: string = 'Bulgarian',
 ): Promise<Array<{ direction: string; id?: string }>> {
   if (!directionsArray || !Array.isArray(directionsArray) || directionsArray.length === 0) {
     return []
@@ -24,7 +24,7 @@ export async function translateDirectionsArray(
         ...dir,
         direction: translatedDirection,
       }
-    })
+    }),
   )
 
   return translatedDirections
@@ -36,20 +36,24 @@ export async function translateDirectionsArray(
  * but the ingredient field is localized so it needs to be preserved per locale
  */
 export async function translateIngredientsArray(
-  ingredientsArray: Array<{
+  ingredientsArray:
+    | Array<{
+        amount?: string
+        unit?: any
+        ingredient: any
+        id?: string
+      }>
+    | undefined,
+  openaiApiKey: string,
+  targetLanguage: string = 'Bulgarian',
+): Promise<
+  Array<{
     amount?: string
     unit?: any
     ingredient: any
     id?: string
-  }> | undefined,
-  openaiApiKey: string,
-  targetLanguage: string = 'Bulgarian'
-): Promise<Array<{
-  amount?: string
-  unit?: any
-  ingredient: any
-  id?: string
-}>> {
+  }>
+> {
   if (!ingredientsArray || !Array.isArray(ingredientsArray) || ingredientsArray.length === 0) {
     return []
   }
@@ -71,7 +75,7 @@ export async function translateIngredientsArray(
 export async function translateRecipe(
   recipeId: number | string,
   payload: Payload,
-  openaiApiKey: string
+  openaiApiKey: string,
 ): Promise<void> {
   console.log(`🌍 Starting translation for recipe ID: ${recipeId}`)
 
@@ -80,7 +84,7 @@ export async function translateRecipe(
     const recipe = await payload.findByID({
       collection: 'recipes',
       id: recipeId,
-      locale: 'en',
+      locale: 'all',
     })
 
     if (!recipe) {
@@ -103,7 +107,7 @@ export async function translateRecipe(
     const translatedDirections = recipe.directions
       ? await translateDirectionsArray(
           recipe.directions as Array<{ direction: string; id?: string }>,
-          openaiApiKey
+          openaiApiKey,
         )
       : undefined
     if (translatedDirections && translatedDirections.length > 0) {
@@ -120,7 +124,7 @@ export async function translateRecipe(
             ingredient: any
             id?: string
           }>,
-          openaiApiKey
+          openaiApiKey,
         )
       : undefined
     if (ingredientsData && ingredientsData.length > 0) {
@@ -131,7 +135,7 @@ export async function translateRecipe(
     await payload.update({
       collection: 'recipes',
       id: recipeId,
-      locale: 'bg',
+      locale: undefined, // Let Payload handle the locale
       data: {
         name: translatedName,
         description: translatedDescription,

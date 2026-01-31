@@ -1,4 +1,4 @@
-import { slugField as payloadSlugField, Field } from 'payload'
+import { Field } from 'payload'
 import { formatSlug } from '@/lib/formatSlug'
 
 /**
@@ -10,19 +10,24 @@ export const slugField = (
   useAsSlug: string = 'name',
   options?: { collection?: string; position?: 'sidebar' },
 ): Field => {
-  return payloadSlugField({
-    useAsSlug,
-    position: options?.position || 'sidebar',
-    slugify: ({ valueToSlugify }) => {
-      return formatSlug(valueToSlugify)
+  return {
+    name: 'slug',
+    type: 'text',
+    admin: {
+      position: options?.position || 'sidebar',
     },
-    overrides: (field) => {
-      // Find the actual slug text field (second field in the row)
-      const slugTextField = field.fields[1]
-      if (slugTextField && slugTextField.type === 'text') {
-        slugTextField.unique = true
-      }
-      return field
+    unique: true,
+    index: true,
+    hooks: {
+      beforeValidate: [
+        ({ data, siblingData }) => {
+          const valueToSlugify = siblingData[useAsSlug] || data?.[useAsSlug]
+          if (valueToSlugify) {
+            return formatSlug(valueToSlugify)
+          }
+          return siblingData.slug || data?.slug
+        },
+      ],
     },
-  })
+  }
 }
