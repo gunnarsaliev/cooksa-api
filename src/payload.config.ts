@@ -48,6 +48,11 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
+  localization: {
+    locales: ['en', 'bg'],
+    defaultLocale: 'en',
+    fallback: true,
+  },
   collections: [
     Users,
     Media,
