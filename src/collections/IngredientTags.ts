@@ -6,6 +6,7 @@ export const IngredientTags: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'slug', 'updatedAt'],
+    group: 'Ingredients',
   },
   access: {
     // Public can read all tags

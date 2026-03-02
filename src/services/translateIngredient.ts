@@ -2,6 +2,7 @@ import { generateText } from 'ai'
 import { createOpenAI } from '@ai-sdk/openai'
 import type { Ingredient } from '@/payload-types'
 import type { Payload } from 'payload'
+import { formatSlug } from '@/lib/formatSlug'
 
 // Types for Lexical rich text structure
 interface LexicalTextNode {
@@ -172,6 +173,10 @@ export async function translateIngredient(
     const translatedName = await translateText(ingredient.name, openaiApiKey)
     console.log(`✅ Translated name: ${ingredient.name} → ${translatedName}`)
 
+    // Generate Bulgarian slug from translated name
+    const translatedSlug = formatSlug(translatedName, 'bg')
+    console.log(`✅ Generated slug: ${translatedSlug}`)
+
     const translatedLongDescription = ingredient.longDescription
       ? await translateRichText(ingredient.longDescription, openaiApiKey)
       : undefined
@@ -193,9 +198,10 @@ export async function translateIngredient(
     await payload.update({
       collection: 'ingredients',
       id: ingredientId,
-      locale: undefined, // Let Payload handle the locale
+      locale: 'bg',
       data: {
         name: translatedName,
+        slug: translatedSlug,
         longDescription: translatedLongDescription,
         faq: translatedFaq,
       },

@@ -1,6 +1,8 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { bg } from '@payloadcms/translations/languages/bg'
+import { en } from '@payloadcms/translations/languages/en'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -48,6 +50,9 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
+  i18n: {
+    supportedLanguages: { en, bg },
+  },
   localization: {
     locales: ['en', 'bg'],
     defaultLocale: 'en',
@@ -57,12 +62,12 @@ export default buildConfig({
     Users,
     Media,
     Countries,
-    IngredientFAQ,
-    IngredientTags,
     Ingredients,
-    RecipeTags,
-    Recipes,
+    IngredientTags,
     IngredientNutritions,
+    IngredientFAQ,
+    Recipes,
+    RecipeTags,
     RecipeNutritions,
   ],
   editor: lexicalEditor(),

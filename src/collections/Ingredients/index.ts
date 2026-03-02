@@ -4,12 +4,14 @@ import { validateUrl } from '@/lib/validators'
 import { slugField } from '@/fields/slug'
 import { triggerTranslateIngredient } from './hooks/triggerTranslateIngredient'
 import { triggerGenerateIngredientNutritions } from './hooks/triggerGenerateIngredientNutritions'
+import { deleteIngredientNutritions } from './hooks/deleteIngredientNutritions'
 
 export const Ingredients: CollectionConfig = {
   slug: 'ingredients',
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'slug', 'updatedAt', '_status'],
+    group: 'Ingredients',
   },
   access: {
     // Public can read published ingredients
@@ -45,6 +47,14 @@ export const Ingredients: CollectionConfig = {
       relationTo: 'media',
       filterOptions: {
         mimeType: { contains: 'image' },
+      },
+    },
+    {
+      name: 'shortDescription',
+      type: 'text',
+      localized: true,
+      admin: {
+        description: 'Brief description for previews and lists',
       },
     },
     {
@@ -145,6 +155,7 @@ export const Ingredients: CollectionConfig = {
   ],
   hooks: {
     afterChange: [triggerTranslateIngredient, triggerGenerateIngredientNutritions],
+    beforeDelete: [deleteIngredientNutritions],
   },
   timestamps: true,
 }

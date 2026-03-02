@@ -20,8 +20,8 @@ export const triggerGenerateIngredientNutritions: CollectionAfterChangeHook<Ingr
   console.log('📄 Previous status:', previousDoc?._status)
   console.log('🌍 Locale:', req.locale)
 
-  // Only trigger for English locale
-  if (req.locale && req.locale !== 'all') {
+  // Only trigger for English locale (undefined locale also skips)
+  if (req.locale !== 'en') {
     console.log(`⏭️  Skipping nutrition generation - not English locale (current: ${req.locale})`)
     return doc
   }
@@ -53,7 +53,7 @@ export const triggerGenerateIngredientNutritions: CollectionAfterChangeHook<Ingr
     // Send message to QStash endpoint for nutrition processing
     await qstash.publishJSON({
       url: QSTASH_ENDPOINTS.NUTRITION,
-      content: {
+      body: {
         ingredientId: doc.id,
       },
     })

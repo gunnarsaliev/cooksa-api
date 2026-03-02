@@ -3,6 +3,7 @@ import { createOpenAI } from '@ai-sdk/openai'
 import type { Recipe } from '@/payload-types'
 import type { Payload } from 'payload'
 import { translateText, translateRichText } from './translateIngredient'
+import { formatSlug } from '@/lib/formatSlug'
 
 /**
  * Translates an array of direction objects
@@ -97,6 +98,10 @@ export async function translateRecipe(
     const translatedName = await translateText(recipe.name, openaiApiKey)
     console.log(`✅ Translated name: ${recipe.name} → ${translatedName}`)
 
+    // Generate Bulgarian slug from translated name
+    const translatedSlug = formatSlug(translatedName, 'bg')
+    console.log(`✅ Generated slug: ${translatedSlug}`)
+
     const translatedDescription = recipe.description
       ? await translateRichText(recipe.description, openaiApiKey)
       : undefined
@@ -135,9 +140,10 @@ export async function translateRecipe(
     await payload.update({
       collection: 'recipes',
       id: recipeId,
-      locale: undefined, // Let Payload handle the locale
+      locale: 'bg',
       data: {
         name: translatedName,
+        slug: translatedSlug,
         description: translatedDescription,
         directions: translatedDirections,
         ingredients: ingredientsData,

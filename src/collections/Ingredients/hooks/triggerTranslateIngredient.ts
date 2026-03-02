@@ -12,7 +12,7 @@ export const triggerTranslateIngredient: CollectionAfterChangeHook<Ingredient> =
   if (doc._status !== 'published') {
     return doc
   }
-  if (req.locale && req.locale !== 'all') {
+  if (req.locale !== 'en') {
     console.log(`⏭️  Skipping translation - not English locale (current: ${req.locale})`)
     return doc
   }
@@ -31,7 +31,7 @@ export const triggerTranslateIngredient: CollectionAfterChangeHook<Ingredient> =
     // Send message to QStash endpoint for translation processing
     await qstash.publishJSON({
       url: QSTASH_ENDPOINTS.TRANSLATION,
-      content: {
+      body: {
         ingredientId: doc.id,
         type: 'ingredient',
       },

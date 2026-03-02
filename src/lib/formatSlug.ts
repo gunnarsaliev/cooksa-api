@@ -1,11 +1,11 @@
 import type { FieldHook } from 'payload'
 import slugify from 'slugify'
 
-export const formatSlug = (val: string): string => {
+export const formatSlug = (val: string, locale: string = 'en'): string => {
   if (!val || typeof val !== 'string') {
     return ''
   }
-  return slugify(val, { lower: true, strict: true, locale: 'en' })
+  return slugify(val, { lower: true, strict: true, locale })
 }
 
 export const formatSlugHook =

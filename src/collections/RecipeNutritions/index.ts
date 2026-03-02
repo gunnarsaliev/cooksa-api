@@ -18,7 +18,7 @@ export const RecipeNutritions: CollectionConfig = {
     },
     admin: {
         useAsTitle: 'recipeSlug',
-        group: 'Recipe System',
+        group: 'Recipes',
         defaultColumns: ['recipeSlug', 'calories', 'protein', 'carbohydrates', '_status', 'updatedAt'],
     },
     fields: [

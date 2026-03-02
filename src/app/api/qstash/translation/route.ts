@@ -15,8 +15,10 @@ async function handler(request: NextRequest) {
   console.log('📦 Received translation processing request')
 
   try {
-    // Parse the request body
-    const body: TranslationMessage = await request.json()
+    // Parse the request body - use the cached body set by verifyQStashSignature
+    // (which already consumed the stream via request.text())
+    const rawBody = (request as any)._body
+    const body: TranslationMessage = typeof rawBody === 'string' ? JSON.parse(rawBody) : await request.json()
     const { ingredientId, recipeId, type } = body
 
     // Determine the type of translation based on the message

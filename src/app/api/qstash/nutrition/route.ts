@@ -16,8 +16,10 @@ async function handler(request: NextRequest) {
   console.log('📦 Received nutrition processing request')
 
   try {
-    // Parse the request body
-    const body: NutritionMessage = await request.json()
+    // Parse the request body - use the cached body set by verifyQStashSignature
+    // (which already consumed the stream via request.text())
+    const rawBody = (request as any)._body
+    const body: NutritionMessage = typeof rawBody === 'string' ? JSON.parse(rawBody) : await request.json()
     const { ingredientId } = body
 
     if (!ingredientId) {

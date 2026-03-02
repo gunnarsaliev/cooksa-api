@@ -25,6 +25,7 @@ export const IngredientFAQ: CollectionConfig = {
   admin: {
     useAsTitle: 'question',
     defaultColumns: ['question', 'ingredient', 'updatedAt'],
+    group: 'Ingredients',
   },
   access: {
     // Public can read all FAQ

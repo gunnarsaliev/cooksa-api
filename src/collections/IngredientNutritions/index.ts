@@ -15,7 +15,7 @@ export const IngredientNutritions: CollectionConfig = {
     },
     admin: {
         useAsTitle: 'ingredientSlugEn',
-        group: 'Recipe System',
+        group: 'Ingredients',
         defaultColumns: ['ingredientSlugEn', 'dataSource', 'calories', 'protein', 'carbohydrates', '_status', 'updatedAt'],
     },
     fields: [

@@ -41,7 +41,7 @@ export const Recipes: CollectionConfig = {
   },
   admin: {
     defaultColumns: ['title', 'slug', '_status', 'updatedAt'],
-    group: 'Recipe System',
+    group: 'Recipes',
   },
   fields: [
     {
@@ -91,6 +91,14 @@ export const Recipes: CollectionConfig = {
         {
           label: 'Content',
           fields: [
+            {
+              name: 'shortDescription',
+              type: 'text',
+              localized: true,
+              admin: {
+                description: 'Brief description for previews and lists',
+              },
+            },
             {
               name: 'description',
               type: 'richText',

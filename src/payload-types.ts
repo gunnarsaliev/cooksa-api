@@ -70,12 +70,12 @@ export interface Config {
     users: User;
     media: Media;
     countries: Country;
-    'ingredient-faq': IngredientFaq;
-    'ingredient-tags': IngredientTag;
     ingredients: Ingredient;
-    'recipe-tags': RecipeTag;
-    recipes: Recipe;
+    'ingredient-tags': IngredientTag;
     'ingredient-nutritions': IngredientNutrition;
+    'ingredient-faq': IngredientFaq;
+    recipes: Recipe;
+    'recipe-tags': RecipeTag;
     'recipe-nutritions': RecipeNutrition;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
@@ -88,12 +88,12 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     countries: CountriesSelect<false> | CountriesSelect<true>;
-    'ingredient-faq': IngredientFaqSelect<false> | IngredientFaqSelect<true>;
-    'ingredient-tags': IngredientTagsSelect<false> | IngredientTagsSelect<true>;
     ingredients: IngredientsSelect<false> | IngredientsSelect<true>;
-    'recipe-tags': RecipeTagsSelect<false> | RecipeTagsSelect<true>;
-    recipes: RecipesSelect<false> | RecipesSelect<true>;
+    'ingredient-tags': IngredientTagsSelect<false> | IngredientTagsSelect<true>;
     'ingredient-nutritions': IngredientNutritionsSelect<false> | IngredientNutritionsSelect<true>;
+    'ingredient-faq': IngredientFaqSelect<false> | IngredientFaqSelect<true>;
+    recipes: RecipesSelect<false> | RecipesSelect<true>;
+    'recipe-tags': RecipeTagsSelect<false> | RecipeTagsSelect<true>;
     'recipe-nutritions': RecipeNutritionsSelect<false> | RecipeNutritionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
@@ -218,38 +218,6 @@ export interface Country {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ingredient-faq".
- */
-export interface IngredientFaq {
-  id: number;
-  ingredient: number | Ingredient;
-  question: string;
-  answer: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  /**
-   * Order in which the Q&A appears (lower numbers first)
-   */
-  order?: number | null;
-  isPublished?: boolean | null;
-  publishedBy?: (number | null) | User;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "ingredients".
  */
 export interface Ingredient {
@@ -257,6 +225,10 @@ export interface Ingredient {
   name: string;
   slug?: string | null;
   image?: (number | null) | Media;
+  /**
+   * Brief description for previews and lists
+   */
+  shortDescription?: string | null;
   longDescription?: {
     root: {
       type: string;
@@ -330,71 +302,6 @@ export interface IngredientTag {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "recipe-tags".
- */
-export interface RecipeTag {
-  id: number;
-  name: string;
-  slug?: string | null;
-  description?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "recipes".
- */
-export interface Recipe {
-  id: number;
-  name: string;
-  media?: {
-    /**
-     * Add one or more YouTube URLs (watch or youtu.be). Optional.
-     */
-    youtubeUrls?:
-      | {
-          url: string;
-          id?: string | null;
-        }[]
-      | null;
-    images?: (number | Media)[] | null;
-  };
-  description?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  ingredients: {
-    amount?: string | null;
-    unit?: ('g' | 'kg' | 'ml' | 'l' | 'tsp' | 'tbsp' | 'cup' | 'smallPiece' | 'mediumPiece' | 'largePiece') | null;
-    ingredient: number | Ingredient;
-    id?: string | null;
-  }[];
-  directions: {
-    direction?: string | null;
-    id?: string | null;
-  }[];
-  relatedRecipes?: (number | Recipe)[] | null;
-  publishedAt?: string | null;
-  authors?: (number | User)[] | null;
-  slug?: string | null;
-  tags?: (number | RecipeTag)[] | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "ingredient-nutritions".
  */
 export interface IngredientNutrition {
@@ -454,6 +361,107 @@ export interface IngredientNutrition {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ingredient-faq".
+ */
+export interface IngredientFaq {
+  id: number;
+  ingredient: number | Ingredient;
+  question: string;
+  answer: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Order in which the Q&A appears (lower numbers first)
+   */
+  order?: number | null;
+  isPublished?: boolean | null;
+  publishedBy?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "recipes".
+ */
+export interface Recipe {
+  id: number;
+  name: string;
+  media?: {
+    /**
+     * Add one or more YouTube URLs (watch or youtu.be). Optional.
+     */
+    youtubeUrls?:
+      | {
+          url: string;
+          id?: string | null;
+        }[]
+      | null;
+    images?: (number | Media)[] | null;
+  };
+  /**
+   * Brief description for previews and lists
+   */
+  shortDescription?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  ingredients: {
+    amount?: string | null;
+    unit?: ('g' | 'kg' | 'ml' | 'l' | 'tsp' | 'tbsp' | 'cup' | 'smallPiece' | 'mediumPiece' | 'largePiece') | null;
+    ingredient: number | Ingredient;
+    id?: string | null;
+  }[];
+  directions: {
+    direction?: string | null;
+    id?: string | null;
+  }[];
+  relatedRecipes?: (number | Recipe)[] | null;
+  publishedAt?: string | null;
+  authors?: (number | User)[] | null;
+  slug?: string | null;
+  tags?: (number | RecipeTag)[] | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "recipe-tags".
+ */
+export interface RecipeTag {
+  id: number;
+  name: string;
+  slug?: string | null;
+  description?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -637,28 +645,28 @@ export interface PayloadLockedDocument {
         value: number | Country;
       } | null)
     | ({
-        relationTo: 'ingredient-faq';
-        value: number | IngredientFaq;
+        relationTo: 'ingredients';
+        value: number | Ingredient;
       } | null)
     | ({
         relationTo: 'ingredient-tags';
         value: number | IngredientTag;
       } | null)
     | ({
-        relationTo: 'ingredients';
-        value: number | Ingredient;
+        relationTo: 'ingredient-nutritions';
+        value: number | IngredientNutrition;
       } | null)
     | ({
-        relationTo: 'recipe-tags';
-        value: number | RecipeTag;
+        relationTo: 'ingredient-faq';
+        value: number | IngredientFaq;
       } | null)
     | ({
         relationTo: 'recipes';
         value: number | Recipe;
       } | null)
     | ({
-        relationTo: 'ingredient-nutritions';
-        value: number | IngredientNutrition;
+        relationTo: 'recipe-tags';
+        value: number | RecipeTag;
       } | null)
     | ({
         relationTo: 'recipe-nutritions';
@@ -786,37 +794,13 @@ export interface CountriesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ingredient-faq_select".
- */
-export interface IngredientFaqSelect<T extends boolean = true> {
-  ingredient?: T;
-  question?: T;
-  answer?: T;
-  order?: T;
-  isPublished?: T;
-  publishedBy?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ingredient-tags_select".
- */
-export interface IngredientTagsSelect<T extends boolean = true> {
-  name?: T;
-  slug?: T;
-  description?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "ingredients_select".
  */
 export interface IngredientsSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
   image?: T;
+  shortDescription?: T;
   longDescription?: T;
   gallery?: T;
   tags?: T;
@@ -841,55 +825,14 @@ export interface IngredientsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "recipe-tags_select".
+ * via the `definition` "ingredient-tags_select".
  */
-export interface RecipeTagsSelect<T extends boolean = true> {
+export interface IngredientTagsSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
   description?: T;
   updatedAt?: T;
   createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "recipes_select".
- */
-export interface RecipesSelect<T extends boolean = true> {
-  name?: T;
-  media?:
-    | T
-    | {
-        youtubeUrls?:
-          | T
-          | {
-              url?: T;
-              id?: T;
-            };
-        images?: T;
-      };
-  description?: T;
-  ingredients?:
-    | T
-    | {
-        amount?: T;
-        unit?: T;
-        ingredient?: T;
-        id?: T;
-      };
-  directions?:
-    | T
-    | {
-        direction?: T;
-        id?: T;
-      };
-  relatedRecipes?: T;
-  publishedAt?: T;
-  authors?: T;
-  slug?: T;
-  tags?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -945,6 +888,73 @@ export interface IngredientNutritionsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ingredient-faq_select".
+ */
+export interface IngredientFaqSelect<T extends boolean = true> {
+  ingredient?: T;
+  question?: T;
+  answer?: T;
+  order?: T;
+  isPublished?: T;
+  publishedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "recipes_select".
+ */
+export interface RecipesSelect<T extends boolean = true> {
+  name?: T;
+  media?:
+    | T
+    | {
+        youtubeUrls?:
+          | T
+          | {
+              url?: T;
+              id?: T;
+            };
+        images?: T;
+      };
+  shortDescription?: T;
+  description?: T;
+  ingredients?:
+    | T
+    | {
+        amount?: T;
+        unit?: T;
+        ingredient?: T;
+        id?: T;
+      };
+  directions?:
+    | T
+    | {
+        direction?: T;
+        id?: T;
+      };
+  relatedRecipes?: T;
+  publishedAt?: T;
+  authors?: T;
+  slug?: T;
+  tags?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "recipe-tags_select".
+ */
+export interface RecipeTagsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1083,12 +1093,12 @@ export interface TaskSchedulePublish {
           value: number | Ingredient;
         } | null)
       | ({
-          relationTo: 'recipes';
-          value: number | Recipe;
-        } | null)
-      | ({
           relationTo: 'ingredient-nutritions';
           value: number | IngredientNutrition;
+        } | null)
+      | ({
+          relationTo: 'recipes';
+          value: number | Recipe;
         } | null)
       | ({
           relationTo: 'recipe-nutritions';

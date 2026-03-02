@@ -13,6 +13,7 @@ export const slugField = (
   return {
     name: 'slug',
     type: 'text',
+    localized: true,
     admin: {
       position: options?.position || 'sidebar',
     },
@@ -20,10 +21,12 @@ export const slugField = (
     index: true,
     hooks: {
       beforeValidate: [
-        ({ data, siblingData }) => {
+        ({ data, siblingData, req }) => {
           const valueToSlugify = siblingData[useAsSlug] || data?.[useAsSlug]
           if (valueToSlugify) {
-            return formatSlug(valueToSlugify)
+            // Use the request locale, defaulting to 'en' if not available
+            const locale = req?.locale || 'en'
+            return formatSlug(valueToSlugify, locale)
           }
           return siblingData.slug || data?.slug
         },
