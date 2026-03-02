@@ -166,10 +166,10 @@ export const Recipes: CollectionConfig = {
                   relationTo: 'ingredients',
                   required: true,
                   label: 'Ingredient',
-                  filterOptions: ({ data, siblingData, relationTo }) => {
+                  filterOptions: ({ data, siblingData }) => {
                     // Safety check for data
                     if (!data?.ingredients || !Array.isArray(data.ingredients)) {
-                      return {}
+                      return true
                     }
 
                     // Get all selected ingredient IDs from the ingredients array
@@ -177,7 +177,7 @@ export const Recipes: CollectionConfig = {
                       .filter((item: any) => {
                         // Skip empty items and the current row being edited
                         if (!item?.ingredient) return false
-                        if (siblingData?.id && item.id === siblingData.id) return false
+                        if ((siblingData as any)?.id && item.id === (siblingData as any).id) return false
                         return true
                       })
                       .map((item: any) => {
@@ -197,7 +197,7 @@ export const Recipes: CollectionConfig = {
                       }
                     }
 
-                    return {}
+                    return true
                   },
                 },
               ],
