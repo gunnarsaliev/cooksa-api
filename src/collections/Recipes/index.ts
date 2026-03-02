@@ -40,8 +40,9 @@ export const Recipes: CollectionConfig = {
     plural: 'Recipes',
   },
   admin: {
-    defaultColumns: ['title', 'slug', '_status', 'updatedAt'],
+    defaultColumns: ['image', 'name', 'slug', '_status', 'updatedAt'],
     group: 'Recipes',
+    useAsTitle: 'name',
   },
   fields: [
     {
@@ -51,37 +52,48 @@ export const Recipes: CollectionConfig = {
       localized: true,
     },
     {
-      name: 'media',
-      label: 'Media',
-      type: 'group',
+      name: 'image',
+      type: 'upload',
+      relationTo: 'media' satisfies CollectionSlug,
+      label: 'Main Image',
+      required: false,
+      admin: {
+        description: 'Main recipe image for previews and hero sections',
+      },
+      filterOptions: {
+        mimeType: { contains: 'image' },
+      },
+    },
+    {
+      name: 'gallery',
+      type: 'upload',
+      relationTo: 'media' satisfies CollectionSlug,
+      label: 'Gallery',
+      required: false,
+      hasMany: true,
       admin: {
         position: 'sidebar',
+        description: 'Upload additional recipe images for gallery',
       },
+      filterOptions: {
+        mimeType: { contains: 'image' },
+      },
+    },
+    {
+      name: 'youtubeUrls',
+      type: 'array',
+      label: 'YouTube Video URLs',
+      admin: {
+        position: 'sidebar',
+        description: 'Add one or more YouTube URLs (watch or youtu.be). Optional.',
+      },
+      required: false,
       fields: [
         {
-          name: 'youtubeUrls',
-          type: 'array',
-          label: 'YouTube Video URLs',
-          admin: {
-            description: 'Add one or more YouTube URLs (watch or youtu.be). Optional.',
-          },
-          required: false,
-          fields: [
-            {
-              name: 'url',
-              type: 'text',
-              required: true,
-              validate: validateYouTubeUrl,
-            },
-          ],
-        },
-        {
-          name: 'images',
-          type: 'upload',
-          relationTo: 'media' satisfies CollectionSlug,
-          label: 'Images',
-          required: false,
-          hasMany: true,
+          name: 'url',
+          type: 'text',
+          required: true,
+          validate: validateYouTubeUrl,
         },
       ],
     },
@@ -103,6 +115,7 @@ export const Recipes: CollectionConfig = {
               name: 'description',
               type: 'richText',
               localized: true,
+              label: 'Long Description',
               editor: lexicalEditor({
                 features: ({ rootFeatures }) => {
                   return [
@@ -114,7 +127,6 @@ export const Recipes: CollectionConfig = {
                   ]
                 },
               }),
-              label: false,
             },
             {
               name: 'ingredients',
@@ -152,9 +164,41 @@ export const Recipes: CollectionConfig = {
                   name: 'ingredient',
                   type: 'relationship',
                   relationTo: 'ingredients',
-                  localized: true,
                   required: true,
                   label: 'Ingredient',
+                  filterOptions: ({ data, siblingData, relationTo }) => {
+                    // Safety check for data
+                    if (!data?.ingredients || !Array.isArray(data.ingredients)) {
+                      return {}
+                    }
+
+                    // Get all selected ingredient IDs from the ingredients array
+                    const selectedIngredientIds = data.ingredients
+                      .filter((item: any) => {
+                        // Skip empty items and the current row being edited
+                        if (!item?.ingredient) return false
+                        if (siblingData?.id && item.id === siblingData.id) return false
+                        return true
+                      })
+                      .map((item: any) => {
+                        // Handle both populated objects and ID strings/numbers
+                        return typeof item.ingredient === 'object'
+                          ? item.ingredient?.id
+                          : item.ingredient
+                      })
+                      .filter(Boolean) // Remove any undefined/null values
+
+                    // Filter out already selected ingredients
+                    if (selectedIngredientIds.length > 0) {
+                      return {
+                        id: {
+                          not_in: selectedIngredientIds,
+                        },
+                      }
+                    }
+
+                    return {}
+                  },
                 },
               ],
             },

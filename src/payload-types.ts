@@ -170,7 +170,7 @@ export interface User {
  */
 export interface Media {
   id: number;
-  alt: string;
+  alt?: string | null;
   prefix?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -193,6 +193,14 @@ export interface Media {
       filename?: string | null;
     };
     card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    large?: {
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -401,18 +409,23 @@ export interface IngredientFaq {
 export interface Recipe {
   id: number;
   name: string;
-  media?: {
-    /**
-     * Add one or more YouTube URLs (watch or youtu.be). Optional.
-     */
-    youtubeUrls?:
-      | {
-          url: string;
-          id?: string | null;
-        }[]
-      | null;
-    images?: (number | Media)[] | null;
-  };
+  /**
+   * Main recipe image for previews and hero sections
+   */
+  image?: (number | null) | Media;
+  /**
+   * Upload additional recipe images for gallery
+   */
+  gallery?: (number | Media)[] | null;
+  /**
+   * Add one or more YouTube URLs (watch or youtu.be). Optional.
+   */
+  youtubeUrls?:
+    | {
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * Brief description for previews and lists
    */
@@ -777,6 +790,16 @@ export interface MediaSelect<T extends boolean = true> {
               filesize?: T;
               filename?: T;
             };
+        large?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
       };
 }
 /**
@@ -909,16 +932,13 @@ export interface IngredientFaqSelect<T extends boolean = true> {
  */
 export interface RecipesSelect<T extends boolean = true> {
   name?: T;
-  media?:
+  image?: T;
+  gallery?: T;
+  youtubeUrls?:
     | T
     | {
-        youtubeUrls?:
-          | T
-          | {
-              url?: T;
-              id?: T;
-            };
-        images?: T;
+        url?: T;
+        id?: T;
       };
   shortDescription?: T;
   description?: T;

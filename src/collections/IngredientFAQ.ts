@@ -50,12 +50,14 @@ export const IngredientFAQ: CollectionConfig = {
       name: 'question',
       type: 'text',
       required: true,
+      localized: true,
     },
     {
       name: 'answer',
       type: 'richText',
       required: true,
       editor: richTextEditor,
+      localized: true,
     },
     {
       name: 'order',

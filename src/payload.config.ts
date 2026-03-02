@@ -26,20 +26,25 @@ const r2Storage = s3Storage({
   collections: {
     media: {
       disableLocalStorage: true,
+      // disablePayloadAccessControl is false by default
+      // This keeps Payload's access control and serves files through API endpoint
+      // URLs will be /api/media/static/filename instead of direct R2 URLs
       prefix: 'media',
-      generateFileURL: ({ filename, prefix }) =>
-        `https://${process.env.R2_BUCKET}.${process.env.R2_ENDPOINT}/${prefix}/${filename}`,
     },
   },
   bucket: process.env.R2_BUCKET || '',
   config: {
-    endpoint: `https://${process.env.R2_ENDPOINT}` || '',
+    endpoint: process.env.R2_ENDPOINT
+      ? process.env.R2_ENDPOINT.startsWith('http')
+        ? process.env.R2_ENDPOINT
+        : `https://${process.env.R2_ENDPOINT}`
+      : '',
     credentials: {
       accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
       secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
     },
     region: 'auto',
-    forcePathStyle: true,
+    forcePathStyle: false,
   },
 })
 

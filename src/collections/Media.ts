@@ -9,6 +9,7 @@ export const Media: CollectionConfig = {
   slug: 'media',
   admin: {
     group: 'System',
+    defaultColumns: ['alt', 'updatedAt'],
   },
   access: {
     read: () => true,
@@ -17,7 +18,8 @@ export const Media: CollectionConfig = {
     {
       name: 'alt',
       type: 'text',
-      required: true,
+      required: false,
+      localized: true,
     },
   ],
   upload: {
@@ -26,21 +28,46 @@ export const Media: CollectionConfig = {
       {
         name: 'thumbnail',
         width: 400,
-        height: 300,
+        // height is omitted to preserve aspect ratio
+        fit: 'inside',
+        withoutEnlargement: true,
         position: 'centre',
+        formatOptions: {
+          format: 'webp',
+          options: {
+            quality: 80,
+          },
+        },
       },
       {
         name: 'card',
         width: 768,
-        height: 1024,
+        // height is omitted to preserve aspect ratio
+        fit: 'inside',
+        withoutEnlargement: true,
         position: 'centre',
+        formatOptions: {
+          format: 'webp',
+          options: {
+            quality: 80,
+          },
+        },
+      },
+      {
+        name: 'large',
+        width: 1920,
+        // height is omitted to preserve aspect ratio
+        fit: 'inside',
+        withoutEnlargement: true,
+        position: 'centre',
+        formatOptions: {
+          format: 'webp',
+          options: {
+            quality: 85,
+          },
+        },
       },
     ],
-    formatOptions: {
-      format: 'webp',
-      options: {
-        quality: 80,
-      },
-    },
+    // Removed top-level formatOptions to preserve original image format
   },
 }
